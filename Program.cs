@@ -8,6 +8,8 @@ global using game_rpg.Services;
 global using game_rpg.Services.ServiceImpl;
 global using AutoMapper;
 global using System.Net;
+global using game_rpg.repository;
+using game_rpg.repository.Implementation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,7 @@ builder.Services.AddDbContext<DataContext>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.AddScoped<CharacterService, CharacterImpl>();
+builder.Services.AddScoped<AuthRepository, AuthRepositoryImpl>();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddControllers();
