@@ -14,5 +14,6 @@ namespace game_rpg.Services
 
         Task<ServiceResponse<GetCharacterDto>> UpdateCharacter(int characterId, AddCharacterDto characterDto);
         Task<ServiceResponse<string>> DeleteCharacter(int characterId);
+        Task<ServiceResponse<GetCharacterDto>> AddCharacterSkill(AddCharacterSkillDto characterSkillDto);
     }
 }

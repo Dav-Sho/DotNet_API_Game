@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace game_rpg.Controllers
 {
+   [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class Character: ControllerBase
@@ -43,6 +46,12 @@ namespace game_rpg.Controllers
      public async Task<ActionResult<ServiceResponse<string>>> DeleteCharacter(int characterId) {
         return Ok(await _characterService.DeleteCharacter(characterId));
      }
+
+     [HttpPost("Skill")]
+     public async Task<ActionResult<ServiceResponse<GetCharacterDto>>> AddCharacterSkill( AddCharacterSkillDto characterDto) {
+        return Ok(await _characterService.AddCharacterSkill(characterDto));
+     }
+
 
     }
 }

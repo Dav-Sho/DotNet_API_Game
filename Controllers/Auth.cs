@@ -18,7 +18,7 @@ namespace game_rpg.Controllers
         }
 
         [HttpPost("Register")]
-        public async Task<ActionResult<ServiceResponse<int>>> Register(RegisterUserDto user) {
+        public async Task<ActionResult<ServiceResponse<string>>> Register(RegisterUserDto user) {
             var newUser = new User{Username = user.Username, Email= user.Email};
             return Ok(await _authRepo.Register( newUser,user.password));
         }
@@ -28,9 +28,5 @@ namespace game_rpg.Controllers
 
             return Ok(await _authRepo.Login(user.Email, user.password));
         }
-
-        
-
-
     }
 }

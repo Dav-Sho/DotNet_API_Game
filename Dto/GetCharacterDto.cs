@@ -15,5 +15,7 @@ namespace game_rpg.Dto
         public int Defense { get; set; } = 10;
         public int Intelligence { get; set; } = 10;
         public RpgClass rpgClass { get; set; } = RpgClass.Kinght;
+        public GetWeaponDto? Weapon { get; set; }
+        public List<GetSkillDto>? Skills { get; set; }
     }
 }

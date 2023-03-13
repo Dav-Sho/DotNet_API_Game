@@ -16,5 +16,7 @@ namespace game_rpg.Models
         public int Intelligence { get; set; } = 10;
         public RpgClass rpgClass { get; set; } = RpgClass.Kinght;
         public User? Users { get; set; }
+        public Weapon? Weapon { get; set; }
+        public List<Skill>? Skills { get; set; }
     }
 }

@@ -1,15 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.IdentityModel.Tokens;
 
 namespace game_rpg.repository.Implementation
 {
     public class AuthRepositoryImpl : AuthRepository
     {
         private readonly DataContext _context;
-        public AuthRepositoryImpl(DataContext context)
+        private readonly IConfiguration _configuration;
+        public AuthRepositoryImpl(DataContext context, IConfiguration configuration)
         {
+            _configuration = configuration;
             _context = context;
             
         }
@@ -31,16 +36,16 @@ namespace game_rpg.repository.Implementation
                 response.Message = "Invalid email or password";
                 return response;
             }else{
-                response.Data = user.Id.ToString();
+                response.Data = CreateToken(user);
                 response.StatusCode = HttpStatusCode.OK;
                 response.Message = "User Login";
                 return response;
             }
         }
 
-        public async Task<ServiceResponse<int>> Register(User user, string password)
+        public async Task<ServiceResponse<string>> Register(User user, string password)
         {
-            var response = new ServiceResponse<int>();
+            var response = new ServiceResponse<string>();
 
             if(await UserExist(user.Email)){
                 response.Success = false;
@@ -55,7 +60,7 @@ namespace game_rpg.repository.Implementation
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
-            response.Data = user.Id;
+            response.Data = CreateToken(user);
             response.StatusCode = HttpStatusCode.Created;
             response.Message = "User created";
             return response;
@@ -83,6 +88,32 @@ namespace game_rpg.repository.Implementation
                 var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
                 return computedHash.SequenceEqual(passwordHash);
             }
+        }
+
+        private string CreateToken(User user) {
+            var claims = new List<Claim>{
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Username)
+            };
+
+            var appSettingToken = _configuration.GetSection("AppSetting:Token").Value;
+            if(appSettingToken is null) {
+                throw new Exception("AppSettings Token is null");
+            }
+
+            SymmetricSecurityKey  key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(appSettingToken));
+
+            SigningCredentials cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+            var tokenDescriptor = new SecurityTokenDescriptor{
+                Subject = new ClaimsIdentity(claims),
+                Expires= DateTime.Now.AddDays(1),
+                SigningCredentials = cred
+            };
+
+            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+            SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token); 
         }
     }
 }

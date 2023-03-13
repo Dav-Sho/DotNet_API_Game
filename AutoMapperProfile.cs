@@ -12,6 +12,8 @@ namespace game_rpg
         {
             CreateMap<AddCharacterDto, Character>();
             CreateMap<Character, GetCharacterDto>();
+            CreateMap<Weapon, GetWeaponDto>();
+            CreateMap<Skill, GetSkillDto>();
         }
     }
 }
