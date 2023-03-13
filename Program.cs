@@ -35,6 +35,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<CharacterService, CharacterImpl>();
 builder.Services.AddScoped<WeaponService, WeaponImpl>();
 builder.Services.AddScoped<AuthRepository, AuthRepositoryImpl>();
+builder.Services.AddScoped<FightService, FightImpl>();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
     options => {
